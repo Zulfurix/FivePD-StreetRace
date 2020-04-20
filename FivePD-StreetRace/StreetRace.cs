@@ -20,21 +20,53 @@ namespace FivePD_StreetRace
         TaskSequence raceSequence;
         Ped[] Suspects = new Ped[amountOfRacers];
         Vehicle[] SuspectVehicles = new Vehicle[amountOfRacers];
-        VehicleHash[] VehicleModels = { VehicleHash.Sentinel, VehicleHash.Stinger, VehicleHash.Tampa, VehicleHash.Vigero, VehicleHash.SultanRS, VehicleHash.Schwarzer, VehicleHash.Bullet, VehicleHash.Buffalo, VehicleHash.Buffalo2 };
-        PedHash[] PedModels = { PedHash.Bevhills01AMM, PedHash.Bevhills02AMM };
-        
+        VehicleHash[] VehicleModels = { VehicleHash.Blista2, 
+            VehicleHash.Prairie, 
+            VehicleHash.Vacca, 
+            VehicleHash.Comet2, 
+            VehicleHash.F620, 
+            VehicleHash.Intruder, 
+            VehicleHash.Warrener, 
+            VehicleHash.Dukes, 
+            VehicleHash.Phoenix, 
+            VehicleHash.Sentinel, 
+            VehicleHash.Stinger, 
+            VehicleHash.Tampa, 
+            VehicleHash.Vigero, 
+            VehicleHash.SultanRS, 
+            VehicleHash.Schwarzer, 
+            VehicleHash.Bullet, 
+            VehicleHash.Buffalo, 
+            VehicleHash.Buffalo2, 
+            VehicleHash.Oracle, 
+            VehicleHash.Oracle2
+        };
+
+        PedHash[] PedModels = { PedHash.Bevhills01AMM, PedHash.Bevhills02AMM, PedHash.AfriAmer01AMM, PedHash.Eastsa01AMM };
+
         // Locations for start / end of the street race
         Vector3[] StartLocations = {
             new Vector3(-934, -127, 37),
             new Vector3(-1924, -521, 11),
-            new Vector3(-1782, 781, 138)
-                };
+            new Vector3(-1782, 781, 138),
+            new Vector3(-507, -657, 33),
+            new Vector3(118, -1441, 29),
+            new Vector3(1466, -1031, 55),
+            new Vector3(1419, -1921, 69),
+            new Vector3(-3034, 1430, 24)
+        };
 
         Vector3[] EndLocations = {
             new Vector3(1225, -2052, 44),
             new Vector3(-74, 874, 235),
             new Vector3(187, -3031, 5),
-            new Vector3(-1340, -838, 17)
+            new Vector3(-1340, -838, 17),
+            new Vector3(-228, -674, 33),
+            new Vector3(-369, -1831, 22),
+            new Vector3(388, -1225, 40),
+            new Vector3(798, -1433, 27),
+            new Vector3(1030, -741, 57),
+            new Vector3(62, -2036, 18)
         };
 
         public StreetRace()
@@ -45,7 +77,7 @@ namespace FivePD_StreetRace
             this.ShortName = "Street Race";
             this.CalloutDescription = "Local residents report acts of dangerous driving and street racing involving multiple vehicles.";
             this.ResponseCode = 3;
-            this.StartDistance = 300f;
+            this.StartDistance = 400f;
         }
 
         public async override Task Init()
@@ -69,7 +101,18 @@ namespace FivePD_StreetRace
 
                 // Put suspect in their vehicle
                 SuspectVehicles[i] = await World.CreateVehicle(VehicleModels[random.Next(0,VehicleModels.Length)], Location + offset);
+                SuspectVehicles[i].PlaceOnGround();
                 Suspects[i].SetIntoVehicle(SuspectVehicles[i], VehicleSeat.Driver);
+
+                // Randomly applied vehicle modifications
+                if (random.Next(0, 10) == 5)
+                {
+                    bool turboEnabled = random.Next(0, 1) == 1;
+                    ToggleVehicleMod(SuspectVehicles[i].Handle, 18, turboEnabled);          // Turbo
+                    SetVehicleMod(SuspectVehicles[i].Handle, 11, random.Next(0,4), true);   // Engine
+                    SetVehicleMod(SuspectVehicles[i].Handle, 12, random.Next(0, 4), true);  // Brakes
+                    SetVehicleMod(SuspectVehicles[i].Handle, 13, random.Next(0, 4), true);  // Transmission
+                }
 
                 offset += 5f;
             }
@@ -90,14 +133,17 @@ namespace FivePD_StreetRace
             {
                 raceSequence = new TaskSequence();
 
+                // Potential Driving Styles = 1074543228, 786956
                 // Set up task sequence
                 for (int j = 0; j < amountOfRaceCheckpoints; j++)
-                    raceSequence.AddTask.DriveTo(SuspectVehicles[i], checkpoints[j], 100f, 1000f, 786956);
+                    raceSequence.AddTask.DriveTo(SuspectVehicles[i], checkpoints[j], 100f, 1000f, 1074543228);
 
                 // Initiate the task sequence for current ped
+                SuspectVehicles[i].Speed = 20f;
                 Suspects[i].Task.PerformSequence(raceSequence);
-                SetDriverAbility(Suspects[i].Handle, 1000f);
-                SetDriverAggressiveness(Suspects[i].Handle, 1000f);
+                SetDriverAbility(Suspects[i].Handle, 1.0f);
+                SetDriverAggressiveness(Suspects[i].Handle, 1.0f);
+                SetDriverRacingModifier(Suspects[i].Handle, 1.0f);
             }
 
             Tick += Update;
