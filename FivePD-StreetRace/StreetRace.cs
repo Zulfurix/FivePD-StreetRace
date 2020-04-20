@@ -80,6 +80,28 @@ namespace FivePD_StreetRace
             this.StartDistance = 400f;
         }
 
+        public override void OnCancelAfter()
+        {
+            CleanUp();
+            base.OnCancelAfter();
+        }
+
+        public override void OnCancelBefore()
+        {
+            CleanUp();
+            base.OnCancelBefore();
+        }
+
+        private void CleanUp()
+        {
+            Debug.WriteLine(Suspects.Length + " Is the length");
+            for (int i = 0; i < amountOfRacers; i++)
+            {
+                Suspects[i].MarkAsNoLongerNeeded();
+                SuspectVehicles[i].MarkAsNoLongerNeeded();
+            }
+        }
+
         public async override Task Init()
         {
             OnAccept();
