@@ -92,6 +92,7 @@ namespace FivePD_StreetRace
             base.OnCancelBefore();
         }
 
+        // Ensure taht the entities are automatially removed by garbage collection
         private void CleanUp()
         {
             Debug.WriteLine(Suspects.Length + " Is the length");
@@ -105,8 +106,6 @@ namespace FivePD_StreetRace
         public async override Task Init()
         {
             OnAccept();
-
-            float offset = 0f;
 
             // Set up suspects + their vehicles
             for (int i = 0; i < amountOfRacers; i++)
@@ -122,8 +121,8 @@ namespace FivePD_StreetRace
                 Suspects[i].AttachedBlip.IsShortRange = true;
 
                 // Put suspect in their vehicle
-                SuspectVehicles[i] = await World.CreateVehicle(VehicleModels[random.Next(0,VehicleModels.Length)], Location + offset);
-                SuspectVehicles[i].PlaceOnGround();
+                Vector3 placemenetPos = World.GetNextPositionOnStreet(Location, true);
+                SuspectVehicles[i] = await World.CreateVehicle(VehicleModels[random.Next(0,VehicleModels.Length)], placemenetPos);
                 Suspects[i].SetIntoVehicle(SuspectVehicles[i], VehicleSeat.Driver);
 
                 // Randomly applied vehicle modifications
@@ -135,8 +134,6 @@ namespace FivePD_StreetRace
                     SetVehicleMod(SuspectVehicles[i].Handle, 12, random.Next(0, 4), true);  // Brakes
                     SetVehicleMod(SuspectVehicles[i].Handle, 13, random.Next(0, 4), true);  // Transmission
                 }
-
-                offset += 5f;
             }
         }
 
@@ -166,6 +163,13 @@ namespace FivePD_StreetRace
                 SetDriverAbility(Suspects[i].Handle, 1.0f);
                 SetDriverAggressiveness(Suspects[i].Handle, 1.0f);
                 SetDriverRacingModifier(Suspects[i].Handle, 1.0f);
+
+                Vector3 closestNode = new Vector3(0f,0f,0f);
+                //GetClosestVehicleNode(Suspects[i].Position.X, Suspects[i].Position.Y, Suspects[i].Position.Z, ref closestNode, 0, 100f, 2.5f);
+                GetClosestMajorVehicleNode(Suspects[i].Position.X, Suspects[i].Position.Y, Suspects[i].Position.Z, ref closestNode, 3.0f, 0);
+                float initialHeading = GetHeadingFromVector_2d(closestNode.X - Suspects[i].Position.X, closestNode.Y - Suspects[i].Position.Y);
+
+                SuspectVehicles[i].Heading = initialHeading;
             }
 
             Tick += Update;
