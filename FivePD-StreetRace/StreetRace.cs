@@ -10,7 +10,7 @@ using CalloutAPI;
 
 namespace FivePD_StreetRace
 {
-    [CalloutProperties("StreetRace", "Zulfurix", "1.0", Probability.Medium)]
+    [CalloutProperties("StreetRace", "Zulfurix", "1.1", Probability.Medium)]
     public class StreetRace : CalloutAPI.Callout
     {
         static int amountOfRacers = 3;
@@ -53,7 +53,8 @@ namespace FivePD_StreetRace
             new Vector3(118, -1441, 29),
             new Vector3(1466, -1031, 55),
             new Vector3(1419, -1921, 69),
-            new Vector3(-3034, 1430, 24)
+            new Vector3(-3034, 1430, 24),
+            new Vector3(263, -579, 43)
         };
 
         Vector3[] EndLocations = {
