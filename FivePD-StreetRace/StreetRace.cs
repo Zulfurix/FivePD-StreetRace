@@ -51,10 +51,10 @@ namespace FivePD_StreetRace
             new Vector3(-1782, 781, 138),
             new Vector3(-507, -657, 33),
             new Vector3(118, -1441, 29),
-            new Vector3(1466, -1031, 55),
-            new Vector3(1419, -1921, 69),
             new Vector3(-3034, 1430, 24),
-            new Vector3(263, -579, 43)
+            new Vector3(263, -579, 43),
+            new Vector3(-242, -2623, 5.66f),
+            new Vector3(466, -1184, 41)
         };
 
         Vector3[] EndLocations = {
@@ -78,7 +78,7 @@ namespace FivePD_StreetRace
             this.ShortName = "Street Race";
             this.CalloutDescription = "Local residents report acts of dangerous driving and street racing involving multiple vehicles.";
             this.ResponseCode = 3;
-            this.StartDistance = 400f;
+            this.StartDistance = 200f;
         }
 
         public override void OnCancelAfter()
@@ -96,7 +96,6 @@ namespace FivePD_StreetRace
         // Ensure taht the entities are automatially removed by garbage collection
         private void CleanUp()
         {
-            Debug.WriteLine(Suspects.Length + " Is the length");
             for (int i = 0; i < amountOfRacers; i++)
             {
                 Suspects[i].MarkAsNoLongerNeeded();
@@ -121,7 +120,7 @@ namespace FivePD_StreetRace
                 Suspects[i].AttachedBlip.Color = BlipColor.Red;
                 Suspects[i].AttachedBlip.IsShortRange = true;
 
-                // Put suspect in their vehicle
+                // Put suspect in their vehicle after calculating spawn position for their vehicle
                 Vector3 placemenetPos = World.GetNextPositionOnStreet(Location, true);
                 SuspectVehicles[i] = await World.CreateVehicle(VehicleModels[random.Next(0,VehicleModels.Length)], placemenetPos);
                 Suspects[i].SetIntoVehicle(SuspectVehicles[i], VehicleSeat.Driver);
@@ -165,8 +164,9 @@ namespace FivePD_StreetRace
                 SetDriverAggressiveness(Suspects[i].Handle, 1.0f);
                 SetDriverRacingModifier(Suspects[i].Handle, 1.0f);
 
+                // Calculate desired heading in the direction of the next path finding node. This is used to ensure that the suspect
+                // vehicle is facing the right direction before initiating the task sequence
                 Vector3 closestNode = new Vector3(0f,0f,0f);
-                //GetClosestVehicleNode(Suspects[i].Position.X, Suspects[i].Position.Y, Suspects[i].Position.Z, ref closestNode, 0, 100f, 2.5f);
                 GetClosestMajorVehicleNode(Suspects[i].Position.X, Suspects[i].Position.Y, Suspects[i].Position.Z, ref closestNode, 3.0f, 0);
                 float initialHeading = GetHeadingFromVector_2d(closestNode.X - Suspects[i].Position.X, closestNode.Y - Suspects[i].Position.Y);
 
