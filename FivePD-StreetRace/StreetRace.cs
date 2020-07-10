@@ -5,13 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using static CitizenFX.Core.Native.API;
-using CalloutAPI;
+using FivePD.API;
 
 
 namespace FivePD_StreetRace
 {
-    [CalloutProperties("StreetRace", "Zulfurix", "1.1", Probability.Medium)]
-    public class StreetRace : CalloutAPI.Callout
+    [CalloutProperties("Street Race", "Zulfurix", "2.3")]
+    public class StreetRace : FivePD.API.Callout
     {
         static int amountOfRacers = 3;
         static int amountOfRaceCheckpoints = 10;
@@ -20,7 +20,8 @@ namespace FivePD_StreetRace
         TaskSequence raceSequence;
         Ped[] Suspects = new Ped[amountOfRacers];
         Vehicle[] SuspectVehicles = new Vehicle[amountOfRacers];
-        VehicleHash[] VehicleModels = { VehicleHash.Blista2, 
+        VehicleHash[] VehicleModels = { 
+            VehicleHash.Blista2, 
             VehicleHash.Prairie, 
             VehicleHash.Vacca, 
             VehicleHash.Comet2, 
@@ -72,7 +73,7 @@ namespace FivePD_StreetRace
 
         public StreetRace()
         {
-            InitBase(World.GetNextPositionOnStreet(StartLocations[random.Next(0, StartLocations.Length)], true));
+            InitInfo(World.GetNextPositionOnStreet(StartLocations[random.Next(0, StartLocations.Length)], true));
 
             // Callout details
             this.ShortName = "Street Race";
@@ -103,9 +104,9 @@ namespace FivePD_StreetRace
             }
         }
 
-        public async override Task Init()
+        public async override Task OnAccept()
         {
-            OnAccept();
+            InitBlip();
 
             // Set up suspects + their vehicles
             for (int i = 0; i < amountOfRacers; i++)
