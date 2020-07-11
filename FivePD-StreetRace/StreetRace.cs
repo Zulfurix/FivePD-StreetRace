@@ -82,28 +82,6 @@ namespace FivePD_StreetRace
             this.StartDistance = 200f;
         }
 
-        public override void OnCancelAfter()
-        {
-            CleanUp();
-            base.OnCancelAfter();
-        }
-
-        public override void OnCancelBefore()
-        {
-            CleanUp();
-            base.OnCancelBefore();
-        }
-
-        // Ensure taht the entities are automatially removed by garbage collection
-        private void CleanUp()
-        {
-            for (int i = 0; i < amountOfRacers; i++)
-            {
-                Suspects[i].MarkAsNoLongerNeeded();
-                SuspectVehicles[i].MarkAsNoLongerNeeded();
-            }
-        }
-
         public async override Task OnAccept()
         {
             InitBlip();
