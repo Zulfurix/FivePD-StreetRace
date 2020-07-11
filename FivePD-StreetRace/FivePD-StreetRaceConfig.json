@@ -1,7 +1,6 @@
 {
   "config": {
-    "maxAmountOfRacers": 10,
+    "maxAmountOfRacers": 5,
     "minAmountOfRacers": 2
-
   }
 }
