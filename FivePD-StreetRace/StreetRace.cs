@@ -173,13 +173,6 @@ namespace FivePD_StreetRace
 
                 SuspectVehicles[i].Heading = initialHeading;
             }
-
-            Tick += Update;
-        }
-
-        private async Task Update()
-        {
-            await BaseScript.Delay(100);
         }
 
         private void Notify(string message)
