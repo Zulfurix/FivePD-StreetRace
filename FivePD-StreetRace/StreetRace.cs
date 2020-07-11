@@ -113,6 +113,9 @@ namespace FivePD_StreetRace
                     SetVehicleMod(SuspectVehicles[i].Handle, 12, random.Next(0, 4), true);  // Brakes
                     SetVehicleMod(SuspectVehicles[i].Handle, 13, random.Next(0, 4), true);  // Transmission
                 }
+
+                // Exclude suspect vehicles from traffic stop logic
+                Utilities.ExcludeVehicleFromTrafficStop(SuspectVehicles[i].NetworkId, true);
             }
         }
 
