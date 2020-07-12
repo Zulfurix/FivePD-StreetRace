@@ -20,28 +20,7 @@ namespace FivePD_StreetRace
         TaskSequence raceSequence;
         Ped[] Suspects;
         Vehicle[] SuspectVehicles;
-        VehicleHash[] VehicleModels = { 
-            VehicleHash.Blista2, 
-            VehicleHash.Prairie, 
-            VehicleHash.Vacca, 
-            VehicleHash.Comet2, 
-            VehicleHash.F620, 
-            VehicleHash.Intruder, 
-            VehicleHash.Warrener, 
-            VehicleHash.Dukes, 
-            VehicleHash.Phoenix, 
-            VehicleHash.Sentinel, 
-            VehicleHash.Stinger, 
-            VehicleHash.Tampa, 
-            VehicleHash.Vigero, 
-            VehicleHash.SultanRS, 
-            VehicleHash.Schwarzer, 
-            VehicleHash.Bullet, 
-            VehicleHash.Buffalo, 
-            VehicleHash.Buffalo2, 
-            VehicleHash.Oracle, 
-            VehicleHash.Oracle2
-        };
+
 
         PedHash[] PedModels = { PedHash.Bevhills01AMM, PedHash.Bevhills02AMM, PedHash.AfriAmer01AMM, PedHash.Eastsa01AMM };
 
@@ -110,7 +89,7 @@ namespace FivePD_StreetRace
 
                 // Put suspect in their vehicle after calculating spawn position for their vehicle
                 Vector3 placemenetPos = World.GetNextPositionOnStreet(Location, true);
-                SuspectVehicles[i] = await World.CreateVehicle(VehicleModels[random.Next(0,VehicleModels.Length)], placemenetPos);
+                SuspectVehicles[i] = await World.CreateVehicle(GetHashKey(Config.VehicleModels[random.Next(0, Config.VehicleModels.Length)]), placemenetPos);
                 Suspects[i].SetIntoVehicle(SuspectVehicles[i], VehicleSeat.Driver);
 
                 // Randomly applied vehicle modifications

@@ -15,6 +15,7 @@ namespace FivePD_StreetRace
     {
         public static int minAmountOfRacers;
         public static int maxAmountOfRacers;
+        public static string[] VehicleModels;
 
         public static void LoadConfig()
         {
@@ -24,9 +25,14 @@ namespace FivePD_StreetRace
             {
                 minAmountOfRacers = (int)configFile["config"]["minAmountOfRacers"];
                 maxAmountOfRacers = (int)configFile["config"]["maxAmountOfRacers"];
+
+                JArray jarr = (JArray)configFile["config"]["vehicles"];
+                VehicleModels = jarr.ToObject<string[]>();
+                Debug.WriteLine("[FivePD-StreetRace]: Parsed " + VehicleModels.Length + " vehicle names.");
             }
             catch (Exception ex)
             {
+                Debug.WriteLine("[FivePD-StreetRace]: " + ex.Message);
                 minAmountOfRacers = 1;
                 maxAmountOfRacers = 3;
             }

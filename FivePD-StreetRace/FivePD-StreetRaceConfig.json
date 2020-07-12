@@ -1,6 +1,28 @@
 {
   "config": {
     "maxAmountOfRacers": 5,
-    "minAmountOfRacers": 2
+    "minAmountOfRacers": 2,
+    "vehicles": [
+      "Blista2",
+      "Prairie",
+      "Vacca",
+      "Comet2",
+      "F620",
+      "Intruder",
+      "Warrener",
+      "Dukes",
+      "Phoenix",
+      "Sentinel",
+      "Stinger",
+      "Tampa",
+      "Vigero",
+      "SultanRS",
+      "Schwarzer",
+      "Bullet",
+      "Buffalo",
+      "Buffalo2",
+      "Oracle",
+      "Oracle2"
+    ]
   }
 }
