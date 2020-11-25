@@ -19,7 +19,7 @@ namespace FivePD_StreetRace
 
         public static void LoadConfig()
         {
-            string jsonText = LoadResourceFile("fivepd", "callouts/FivePD-StreetRaceConfig.json");
+            string jsonText = LoadResourceFile("fivepd", "callouts/FivePD-StreetRace/FivePD-StreetRaceConfig.json");
             dynamic configFile = JsonConvert.DeserializeObject(jsonText);
             try
             {
@@ -28,7 +28,9 @@ namespace FivePD_StreetRace
 
                 JArray jarr = (JArray)configFile["config"]["vehicles"];
                 VehicleModels = jarr.ToObject<string[]>();
+
                 Debug.WriteLine("[FivePD-StreetRace]: Parsed " + VehicleModels.Length + " vehicle names.");
+                Debug.WriteLine("[FivePD-StreetRace]: Minimum suspect drivers: " + minAmountOfRacers + ", max suspect drivers: " + maxAmountOfRacers);
             }
             catch (Exception ex)
             {

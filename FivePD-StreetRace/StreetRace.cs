@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using static CitizenFX.Core.Native.API;
 using FivePD.API;
-
+using System.Windows;
 
 namespace FivePD_StreetRace
 {
-    [CalloutProperties("Street Race", "Zulfurix", "2.3")]
+    [CalloutProperties("Street Race", "Zulfurix", "2.5")]
     public class StreetRace : FivePD.API.Callout
     {
         static int amountOfRacers;
@@ -88,8 +85,29 @@ namespace FivePD_StreetRace
                 Suspects[i].AttachedBlip.IsShortRange = true;
 
                 // Put suspect in their vehicle after calculating spawn position for their vehicle
-                Vector3 placemenetPos = World.GetNextPositionOnStreet(Location, true);
-                SuspectVehicles[i] = await World.CreateVehicle(GetHashKey(Config.VehicleModels[random.Next(0, Config.VehicleModels.Length)]), placemenetPos);
+                VehicleHash vehicleHash = (VehicleHash) GetHashKey(Config.VehicleModels[random.Next(0, Config.VehicleModels.Length)]);
+
+                Vector3 placemenetPos;
+
+                if (i > 0)
+                {
+                    placemenetPos = World.GetNextPositionOnStreet(SuspectVehicles[i-1].GetOffsetPosition(new Vector3(0, 5, 0)), true);
+                } 
+                else
+                {
+                    placemenetPos = World.GetNextPositionOnStreet(Location, true);
+                }
+
+                // Instantiate empty objects for method ref
+                Vector3 closestNodeCoords = new Vector3();
+                float closestNodeHeading = new float();
+
+                // Obtain closest pathfinding node + heading of node
+                GetClosestVehicleNodeWithHeading(placemenetPos.X, placemenetPos.Y, placemenetPos.Z, ref closestNodeCoords, ref closestNodeHeading, 1, 3, 0);
+                
+                // Create suspect vehicle at that node and set the heading
+                SuspectVehicles[i] = await SpawnVehicle(vehicleHash, closestNodeCoords);
+                SuspectVehicles[i].Heading = closestNodeHeading;
                 Suspects[i].SetIntoVehicle(SuspectVehicles[i], VehicleSeat.Driver);
 
                 // Randomly applied vehicle modifications
@@ -111,11 +129,9 @@ namespace FivePD_StreetRace
         {
             base.OnStart(player);
 
-
             Vector3[] checkpoints = new Vector3[amountOfRaceCheckpoints];
             for (int i = 0; i < amountOfRaceCheckpoints; i++)
                 checkpoints[i] = EndLocations[random.Next(0, EndLocations.Length)];
-
 
             // Initiate suspect ped tasks
             for (int i = 0; i < amountOfRacers; i++)
@@ -133,14 +149,6 @@ namespace FivePD_StreetRace
                 SetDriverAbility(Suspects[i].Handle, 1.0f);
                 SetDriverAggressiveness(Suspects[i].Handle, 1.0f);
                 SetDriverRacingModifier(Suspects[i].Handle, 1.0f);
-
-                // Calculate desired heading in the direction of the next path finding node. This is used to ensure that the suspect
-                // vehicle is facing the right direction before initiating the task sequence
-                Vector3 closestNode = new Vector3(0f,0f,0f);
-                GetClosestMajorVehicleNode(Suspects[i].Position.X, Suspects[i].Position.Y, Suspects[i].Position.Z, ref closestNode, 3.0f, 0);
-                float initialHeading = GetHeadingFromVector_2d(closestNode.X - Suspects[i].Position.X, closestNode.Y - Suspects[i].Position.Y);
-
-                SuspectVehicles[i].Heading = initialHeading;
             }
         }
 
